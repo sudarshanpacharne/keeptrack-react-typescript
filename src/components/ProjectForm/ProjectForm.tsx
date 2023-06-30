@@ -2,24 +2,32 @@ import { BaseSyntheticEvent, ChangeEvent, SyntheticEvent, useState } from "react
 import styles from "./ProjectForm.module.scss";
 import { ProjectFormProps } from "./ProjectForm.types";
 import { Project } from "../../models/Project";
+import { useDispatch } from "react-redux";
+import { AnyAction } from "redux";
+import { ThunkDispatch } from "redux-thunk";
+import { ProjectState } from "../../Projects/state/projectTypes";
+import { loadProjects, saveProject } from "../../Projects/state/projectActions";
 
 const ProjectForm = ({ project: initialProject, onCancle, onSave }: ProjectFormProps) => {
 
     const [project, setProject] = useState(initialProject);
-    const [ errors, setErrors ] = useState({
+
+    const dispatch = useDispatch<ThunkDispatch<ProjectState, any, AnyAction>>();
+
+    const [errors, setErrors] = useState({
         name: '',
         description: '',
         budget: ''
     });
 
     function validate(project: Project) {
-        let errors: any = {name:'', description:'', budget:''};
+        let errors: any = { name: '', description: '', budget: '' };
 
-        if(project.name.length === 0) errors.name = 'Name is required!';
-        if(project.name.length > 0 && project.name.length < 3) errors.name = 'Name needs to be greater than 3 chars!';
-        if(project.description.length === 0) errors.description = 'Description is required!';
-        if(project.budget == 0) errors.budget = 'Budget is required!';
-        
+        if (project.name.length === 0) errors.name = 'Name is required!';
+        if (project.name.length > 0 && project.name.length < 3) errors.name = 'Name needs to be greater than 3 chars!';
+        if (project.description.length === 0) errors.description = 'Description is required!';
+        if (project.budget == 0) errors.budget = 'Budget is required!';
+
         console.log('errors => ', errors);
 
         return errors;
@@ -27,16 +35,18 @@ const ProjectForm = ({ project: initialProject, onCancle, onSave }: ProjectFormP
 
     function isValid() {
         return (
-            errors.name.length === 0 && 
-            errors.description.length === 0 && 
-            errors.budget.length === 0 
+            errors.name.length === 0 &&
+            errors.description.length === 0 &&
+            errors.budget.length === 0
         )
     }
 
     const handleSubmit = (event: SyntheticEvent) => {
-        event.preventDefault(); 
+        event.preventDefault();
         if (!isValid()) return;
-        onSave(project);
+        // onSave(project);
+        dispatch(saveProject(project));
+        dispatch(loadProjects(1));
     }
 
     const handleChange = (event: BaseSyntheticEvent) => {
@@ -64,7 +74,7 @@ const ProjectForm = ({ project: initialProject, onCancle, onSave }: ProjectFormP
             return updatedProject;
         });
 
-        setErrors(()=> validate(updatedProject));
+        setErrors(() => validate(updatedProject));
 
     }
 

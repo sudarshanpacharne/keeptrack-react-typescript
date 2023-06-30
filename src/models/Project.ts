@@ -1,3 +1,4 @@
+
 export class Project {
     id: number | undefined;
     name: string = "";
@@ -6,11 +7,8 @@ export class Project {
     contractTypeId: number | undefined;
     contractSignedOn: string = new Date().toString();
     budget: number = 0;
-    isActive: boolean = false;
-
-    // get isNew(): boolean {
-    //     return this.id == undefined
-    // }
+    isActive: boolean = false;  
+    isNew? = ():boolean => this.id == undefined
 
     constructor(data?: Project) {
         if(!data) return;

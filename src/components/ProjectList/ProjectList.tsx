@@ -14,7 +14,7 @@ const ProjectList = ({ projects, onSave }: ProjectListProps) => {
 
     const handleSave = (project: Project) => {
         console.log("got project in save =>", project)
-        onSave(project);
+        // onSave(project);
     }
 
     const handleCancle = () => {
@@ -25,12 +25,13 @@ const ProjectList = ({ projects, onSave }: ProjectListProps) => {
         <>
             <div className={`${styles.ProjectListContainer} row responsive-margin responsive-padding`}>
                 {
-                    projects.map(project => {
+                    projects.map((project, index) => {
                         return (
-                            <div className="cols-sm" key={project.id}>
+                            // removed onSave={handleSave} from project list due react-redux
+                            <div className="cols-sm" key={index}>
                                 {
                                     (projectBeingEdited == project ? 
-                                    <ProjectForm project={project} onCancle={handleCancle} onSave={handleSave} /> 
+                                    <ProjectForm project={project} onCancle={handleCancle} /> 
                                     : <ProjectCard project={project} onEdit={handleEdit} />)
                                 }
                             </div>

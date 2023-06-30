@@ -1,31 +1,44 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Project } from "../../models/Project";
-import styles from "./ProjectPage.module.scss";
 import { ProjectPageProps } from "./ProjectPage.types";
-import { projectAPI } from "../../controllers/ProjectAPI";
+import { useDispatch, useSelector } from "react-redux";
+import { ProjectState } from "../../Projects/state/projectTypes";
+import { AnyAction } from "redux";
+import { ThunkDispatch } from "redux-thunk";
+import { AppState } from "../../state";
+import { getProjectById } from "../../Projects/state/projectActions";
 import ProjectDetails from "../ProjectDetails/ProjectDetails";
 
 const ProjectPage = ({ }: ProjectPageProps) => {
-    const [loading, setLoading] = useState(false);
-    const [project, setProject] = useState<Project | null>(null);
-    const [error, setError] = useState<string | null>(null);
+    const dispatch = useDispatch<ThunkDispatch<ProjectState, any, AnyAction>>();
+
+    const loading = useSelector((appState: AppState) => appState.projectState.loading)
+    const project = useSelector((appState: AppState) => appState.projectState.selectedProject);
+
+    const error = useSelector((appState: AppState) => appState.projectState.error);
+    // const [loading, setLoading] = useState(false);
+    // const [project, setProject] = useState<Project | null>(null);
+    // const [error, setError] = useState<string | null>(null);
     const params = useParams();
     const id = Number(params.id);
 
     useEffect(() => {
-        setLoading(true);
-        projectAPI
-            .find(id)
-            .then((data) => {
-                setProject(data);
-                setLoading(false);
-            })
-            .catch((e) => {
-                setError(e);
-                setLoading(false);
-            });
-    }, [id]);
+        dispatch(getProjectById(id))
+    },[dispatch])
+
+    // useEffect(() => {
+    //     setLoading(true);
+    //     projectAPI
+    //         .find(id)
+    //         .then((data) => {
+    //             setProject(data);
+    //             setLoading(false);
+    //         })
+    //         .catch((e) => {
+    //             setError(e);
+    //             setLoading(false);
+    //         });
+    // }, [id]);
 
 
     return (
